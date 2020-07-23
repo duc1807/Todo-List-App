@@ -1,12 +1,9 @@
-import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { ScrollView, ImageBackground, KeyboardAvoidingView, StyleSheet, Text, View, TouchableOpacity, Alert, TextInput, Platform } from 'react-native';
+import { ScrollView, ImageBackground, KeyboardAvoidingView, Text, View, TouchableOpacity, Alert, TextInput } from 'react-native';
 import 'react-native-gesture-handler';
-import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { TODOS } from '../../assets/data';
-import SingleTodoScr from '../screens/TodoScreen';
+import styles from '../../assets/styles/Style_AllScreen';
 
 
 // ✗ Todo Items
@@ -24,38 +21,10 @@ interface ToDo = {
 Enum<String> :: ['DONE', 'ACTIVE']
 */
 
-// const onToggleTodo = id => {
-//   const matchesId = idx => x => x.id === idx
-//   // Array.find :: [a] -> (a -> Boolean) -> a
-//   const todo = todoList.find(matchesId(id)); // -> { id, body }
-//   // 
-//   todo.status = todo.status === 'Done' ? 'Active' : 'Done';
-//   const foundIndex = todoList.findIndex(todo => todo.id === id);
-//   todoList[foundIndex] = todo;
-//   const newTodoList = [...todoList];
-//   setTodoList(newTodoList);
-// };
-
-const config = Platform.select({
-  web: { headerMode: 'screen'},
-  default: {},
-})
-
-const AllStack = createStackNavigator(
-  {
-    All: AllScr
-  },
-  config
-);
-
-AllStack.path = '';
-
 const TodoItem = props => {
-
   const statusStyle = {
     backgroundColor: props.todo.status === 'Done' ? 'blue' : 'green'
   };
-
 
   const onLongPress = (todo) => {
     const prompt = `"${todo.body}"`;
@@ -79,22 +48,15 @@ const TodoItem = props => {
       key={props.todo.body}
       style={[styles.todoItem, statusStyle]}
       onPress={() => props.onToggleTodo(props.todo.id)}
-      onLongPress={() => onLongPress(props.todo)}
-    >
-      <Text style={styles.todoText}>
-        {props.idx + 1}: {props.todo.body}
-      </Text>
+      onLongPress={() => onLongPress(props.todo)}>
+        <Text style={styles.todoText}>
+          {props.idx + 1}: {props.todo.body}
+        </Text>
     </TouchableOpacity>
   );
 };
 
 const Stack = createStackNavigator();
-
-<NavigationContainer>
-  <Stack.Navigator>
-    <Stack.Screen name="Home" component={SingleTodoScr}/>
-  </Stack.Navigator>
-</NavigationContainer>
 
 /* React.Node 
    @props: 
@@ -104,7 +66,7 @@ const Stack = createStackNavigator();
     - `onToggleTodo`: Void => Any
     - `onDeleteTodo`: Void => Any
 */
-const AllScr = (props) => {
+function AllScr({ navigation }) {
   const [todoList, setTodoList] = useState(TODOS);
   const [todoBody, setTodoBody] = useState('');
 
@@ -127,10 +89,10 @@ const AllScr = (props) => {
     const newTodoList = [...todoList];
     setTodoList(newTodoList);
     setTimeout(() => {
-      props.navigation.navigate('TodoScr', {
+      navigation.navigate('TodoDetail', {
         updatedTodo: todo
       });
-    }, 1000);
+    }, 500);
   };
 
   const onDeleteTodo = id => {
@@ -138,14 +100,17 @@ const AllScr = (props) => {
     setTodoList(newTodoList);
   };
 
+  const link = 'https://mondrian.mashable.com/wp-content%252Fgallery%2' + 
+               '52Fiphone-6-wallpaper%252Ftumblr_nglh5niidy1tqjbpqo2_1' + 
+               '280.jpg%252Ffit-in__850x850.jpg?signature=lE0RDwtRFUln' + 
+               'umotMRH6JRutz-g=&source=https%3A%2F%2Fmashable.com';
   return (
-    <ImageBackground style={styles.container} source={{ uri: 'https://mondrian.mashable.com/wp-content%252Fgallery%252Fiphone-6-wallpaper%252Ftumblr_nglh5niidy1tqjbpqo2_1280.jpg%252Ffit-in__850x850.jpg?signature=lE0RDwtRFUlnumotMRH6JRutz-g=&source=https%3A%2F%2Fmashable.com' }}>
+    <ImageBackground style={styles.container} source={{ uri: link }}>
       <KeyboardAvoidingView
         enabled
         behavior="padding">
         <ScrollView style={{ flex: 1 }}>
           <View>
-
             <View style={styles.container}>
               {todoList.map((todo, idx) => {
                 return (
@@ -169,7 +134,6 @@ const AllScr = (props) => {
                   <Text style={styles.buttonText}>Submit</Text>
                 </TouchableOpacity>
               </View>
-
             </View>
           </View>
         </ScrollView>
@@ -177,65 +141,5 @@ const AllScr = (props) => {
     </ImageBackground>
   )
 }
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    backgroundColor: 'black',
-    justifyContent: 'center'
-  },
-  todoItem: {
-    margin: 5,
-    padding: 10,
-    minHeight: 50,
-    width: '95%',
-    color: 'white',
-    borderRadius: 5,
-    flexWrap: 'wrap'
-  },
-  todoText: {
-    fontSize: 20,
-    color: 'white',
-    fontWeight: 'bold'
-  },
-  todoInput: {
-    width: '95%',
-    minHeight: 30,
-    color: 'white',
-    borderWidth: 1,
-    marginTop: '20%',
-    marginBottom: '5%',
-    borderColor: 'grey'
-  },
-  inputContainer: {
-    flex: 1,
-    width: '90%',
-    marginTop: 20,
-    marginBottom: '10%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 100
-  },
-  button: {
-    height: 50,
-    width: '50%',
-    borderRadius: 10,
-    alignItems: 'center',
-    backgroundColor: 'blue',
-    justifyContent: 'center'
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: 'bold'
-  },
-  scrollView: {
-    flex: 1,
-    paddingTop: 1000
-  }
-});
-
 
 export default AllScr;
