@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import 'react-native-gesture-handler';
+import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -26,7 +27,26 @@ function HomeStackScreen() {
 const BotTabNavigation = () => {
   return (
     <NavigationContainer>
-      <Tab.Navigator>
+      <Tab.Navigator 
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          if (route.name === "Complete") {
+            iconName = focused ? 'ios-checkmark-circle' : 'ios-checkmark-circle';
+          } else if (route.name === 'All') {
+            iconName = focused ? 'md-add-circle' : 'md-add-circle';
+          } else if (route.name === 'Active') {
+            iconName = focused ? 'ios-information-circle' : 'ios-information-circle';
+          } 
+          // You can return any component that you like here!
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+      })}
+      tabBarOptions={{
+        activeTintColor: 'tomato',
+        inactiveTintColor: 'gray',
+      }}>
         <Tab.Screen name="Complete" component={CompleteScr} />
         <Tab.Screen name="All" component={HomeStackScreen} />
         <Tab.Screen name="Active" component={ActiveScr} />
